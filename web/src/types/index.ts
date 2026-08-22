@@ -103,7 +103,7 @@ export interface BehaviorObservation {
 
 export interface ObservationMedia {
   id: string;
-  type: "image" | "video";
+  type: "image" | "video" | "audio";
   url: string;
   name: string;
 }
