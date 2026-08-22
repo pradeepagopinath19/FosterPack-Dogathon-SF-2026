@@ -20,8 +20,29 @@ export interface Volunteer extends BaseProfile {
   role: "volunteer";
   skills: VolunteerSkill[];
   availability: string[];
+  availabilityExceptions: AvailabilityException[];
   maxTravelMiles: number;
   hasVehicle: boolean;
+  reliability: ReliabilityStats;
+}
+
+// Recurring weekly availability + one-off exceptions (F5.1).
+export type Weekday = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
+export type TimeBlock = "Morning" | "Afternoon" | "Evening";
+
+export interface AvailabilityException {
+  id: string;
+  date: string;
+  note: string;
+}
+
+// Claim/completion/late-release history, framed as encouragement — never a
+// punitive score.
+export interface ReliabilityStats {
+  tasksClaimed: number;
+  tasksCompleted: number;
+  lateReleases: number;
+  memberSince: string;
 }
 
 export type VolunteerSkill =
