@@ -1,15 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { volunteers } from "@/lib/mock-data";
-
-const skillLabels: Record<string, string> = {
-  "dog-walking": "Dog walking",
-  "vet-transport": "Vet transport",
-  "overnight-sitting": "Overnight sitting",
-  "supply-runs": "Supply runs",
-  training: "Training",
-  photography: "Photography",
-};
+import { skillLabels } from "@/lib/labels";
 
 export default async function VolunteerDetailPage({
   params,
@@ -25,7 +17,7 @@ export default async function VolunteerDetailPage({
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
-      <Link href="/volunteers" className="text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
+      <Link href="/admin/volunteers" className="text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
         &larr; Back to volunteers
       </Link>
 

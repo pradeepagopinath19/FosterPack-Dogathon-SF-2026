@@ -11,7 +11,7 @@ function initials(name: string) {
 }
 
 export default function ProfileCard({ profile }: { profile: UserProfile }) {
-  const href = profile.role === "volunteer" ? `/volunteers/${profile.id}` : `/fosters/${profile.id}`;
+  const href = profile.role === "volunteer" ? `/admin/volunteers/${profile.id}` : `/admin/fosters/${profile.id}`;
 
   return (
     <Link

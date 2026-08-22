@@ -16,18 +16,24 @@ export default function Home() {
             trackable actions — walks, vet runs, medication, and backup care.
           </p>
         </div>
-        <div className="flex w-full flex-col gap-3 sm:flex-row">
+        <div className="flex w-full flex-col gap-3">
           <Link
-            href="/volunteers"
-            className="flex-1 rounded-full bg-orange-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-orange-700"
+            href="/volunteer"
+            className="rounded-full bg-orange-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-orange-700"
           >
-            Browse volunteers
+            Volunteer view
           </Link>
           <Link
-            href="/fosters"
-            className="flex-1 rounded-full border border-zinc-300 px-5 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+            href="/foster"
+            className="rounded-full border border-zinc-300 px-5 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
           >
-            Browse foster parents
+            Foster parent view
+          </Link>
+          <Link
+            href="/admin"
+            className="rounded-full border border-zinc-300 px-5 py-3 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          >
+            Admin view
           </Link>
         </div>
       </div>

@@ -13,7 +13,7 @@ export default function FostersPage() {
           </p>
         </div>
         <Link
-          href="/volunteers"
+          href="/admin/volunteers"
           className="text-sm font-medium text-orange-600 hover:text-orange-700 dark:text-orange-400"
         >
           View volunteers &rarr;

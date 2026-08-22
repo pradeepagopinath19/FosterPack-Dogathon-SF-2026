@@ -1,4 +1,4 @@
-import type { DogProfile, FosterParent, Volunteer } from "@/types";
+import type { DogProfile, FosterParent, ScheduledTask, Volunteer } from "@/types";
 
 export const volunteers: Volunteer[] = [
   {
@@ -78,6 +78,7 @@ export const dogs: DogProfile[] = [
     age: 4,
     size: "large",
     energyLevel: "high",
+    status: "needs-vet",
     temperament: ["friendly", "food-motivated", "leash-reactive"],
     goodWith: { kids: true, dogs: false, cats: false },
     feeding: {
@@ -104,6 +105,7 @@ export const dogs: DogProfile[] = [
     age: 2,
     size: "small",
     energyLevel: "moderate",
+    status: "available-for-adoption",
     temperament: ["shy at first", "affectionate once warmed up"],
     goodWith: { kids: false, dogs: true, cats: true },
     feeding: {
@@ -115,5 +117,33 @@ export const dogs: DogProfile[] = [
     medical: [],
     quirks: ["Hides during thunderstorms", "Needs a slow, quiet introduction"],
     intakeDate: "2026-07-30",
+  },
+];
+
+export const scheduledTasks: ScheduledTask[] = [
+  {
+    id: "t1",
+    dogId: "d1",
+    type: "vet-visit",
+    scheduledFor: "2026-08-23T10:00:00",
+    status: "assigned",
+    assignedVolunteerId: "v1",
+    notes: "Hip dysplasia follow-up. Bring current glucosamine chew schedule.",
+  },
+  {
+    id: "t2",
+    dogId: "d1",
+    type: "medication",
+    scheduledFor: "2026-08-22T20:00:00",
+    status: "open",
+    notes: "Evening glucosamine chew with dinner.",
+  },
+  {
+    id: "t3",
+    dogId: "d2",
+    type: "dog-walking",
+    scheduledFor: "2026-08-24T09:00:00",
+    status: "open",
+    notes: "Needs a slow, quiet handler — shy around new people.",
   },
 ];

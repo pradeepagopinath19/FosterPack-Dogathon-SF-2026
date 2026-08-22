@@ -41,9 +41,15 @@ export interface FosterParent extends BaseProfile {
 
 export type UserProfile = Volunteer | FosterParent;
 
-// Modeled now for context and future persistence; no UI surfaces it yet.
 export type DogSize = "small" | "medium" | "large" | "extra-large";
 export type EnergyLevel = "low" | "moderate" | "high";
+
+export type DogStatus =
+  | "intake"
+  | "in-care"
+  | "needs-vet"
+  | "available-for-adoption"
+  | "adopted";
 
 export interface MedicalNote {
   condition: string;
@@ -67,6 +73,7 @@ export interface DogProfile {
   age: number;
   size: DogSize;
   energyLevel: EnergyLevel;
+  status: DogStatus;
   temperament: string[];
   goodWith: {
     kids: boolean;
@@ -77,4 +84,26 @@ export interface DogProfile {
   medical: MedicalNote[];
   quirks: string[];
   intakeDate: string;
+}
+
+// Scheduling/workflow layer: vet visits, walks, transport, medication, etc.
+// tied to a dog and optionally assigned to a volunteer.
+export type TaskType =
+  | "vet-visit"
+  | "medication"
+  | "dog-walking"
+  | "vet-transport"
+  | "overnight-sitting"
+  | "supply-runs";
+
+export type TaskStatus = "open" | "assigned" | "completed" | "cancelled";
+
+export interface ScheduledTask {
+  id: string;
+  dogId: string;
+  type: TaskType;
+  scheduledFor: string;
+  status: TaskStatus;
+  assignedVolunteerId?: string;
+  notes: string;
 }
