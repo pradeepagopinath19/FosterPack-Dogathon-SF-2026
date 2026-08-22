@@ -1,7 +1,9 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- previews use local object URLs selected by the foster */
 
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { loadDogContext, saveDogContext } from "@/lib/profile-context";
 import type { BehaviorCategory, BehaviorObservation, ConcernLevel, ObservationMedia } from "@/types";
 
 const categoryLabels: Record<BehaviorCategory, string> = {
@@ -21,6 +23,15 @@ function formatObservationDate(value: string) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(value));
 }
 
+function fileToDataUrl(file: Blob) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
 function inferDetails(note: string, hasVoice: boolean, hasVisual: boolean) {
   const lower = note.toLowerCase();
   const urgent = ["blood", "seizure", "collapsed", "can't breathe", "cannot breathe"].some((word) => lower.includes(word));
@@ -36,7 +47,8 @@ function inferDetails(note: string, hasVoice: boolean, hasVisual: boolean) {
   return { category, concernLevel, behavior, context };
 }
 
-export default function BehaviorJournal({ dogName, temperament, initialObservations }: {
+export default function BehaviorJournal({ dogId, dogName, temperament, initialObservations }: {
+  dogId: string;
   dogName: string;
   temperament: string[];
   initialObservations: BehaviorObservation[];
@@ -63,6 +75,14 @@ export default function BehaviorJournal({ dogName, temperament, initialObservati
 
   const profileInsights = useMemo(() => [...temperament, ...observations.slice(0, 3).map((observation) => observation.behavior)], [observations, temperament]);
   const profileMedia = useMemo(() => observations.flatMap((observation) => observation.media ?? []).filter((media) => media.type !== "audio"), [observations]);
+
+  useEffect(() => {
+    const hydrate = window.setTimeout(() => {
+      const stored = loadDogContext(dogId);
+      if (stored) setObservations(stored.observations);
+    }, 0);
+    return () => window.clearTimeout(hydrate);
+  }, [dogId]);
 
   function resetComposer() {
     setEditingId(null); setNote(""); setPendingMedia([]); setVoiceMedia(null);
@@ -98,9 +118,10 @@ export default function BehaviorJournal({ dogName, temperament, initialObservati
       const recorder = new MediaRecorder(stream);
       streamRef.current = stream; recorderRef.current = recorder; chunksRef.current = [];
       recorder.ondataavailable = (event) => { if (event.data.size > 0) chunksRef.current.push(event.data); };
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const blob = new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" });
-        setVoiceMedia({ id: `voice-${Date.now()}`, type: "audio", url: URL.createObjectURL(blob), name: "Foster voice note" });
+        const url = await fileToDataUrl(blob).catch(() => URL.createObjectURL(blob));
+        setVoiceMedia({ id: `voice-${Date.now()}`, type: "audio", url, name: "Foster voice note" });
         streamRef.current?.getTracks().forEach((track) => track.stop()); streamRef.current = null;
       };
       recorder.start(); setRecordingSeconds(0); setIsRecording(true);
@@ -108,13 +129,13 @@ export default function BehaviorJournal({ dogName, temperament, initialObservati
     } catch { setRecordingError("Microphone access was not available. You can still type or add a photo/video."); }
   }
 
-  function addMedia(files: FileList | null) {
+  async function addMedia(files: FileList | null) {
     if (!files) return;
-    const additions = Array.from(files).slice(0, Math.max(0, 4 - pendingMedia.length)).map((file, index) => ({
+    const additions = await Promise.all(Array.from(files).slice(0, Math.max(0, 4 - pendingMedia.length)).map(async (file, index) => ({
       id: `media-${Date.now()}-${index}`,
       type: file.type.startsWith("video/") ? "video" as const : "image" as const,
-      url: URL.createObjectURL(file), name: file.name,
-    }));
+      url: await fileToDataUrl(file).catch(() => URL.createObjectURL(file)), name: file.name,
+    })));
     setPendingMedia((current) => [...current, ...additions]);
   }
 
@@ -125,13 +146,16 @@ export default function BehaviorJournal({ dogName, temperament, initialObservati
     const resolvedCategory = detailsTouched ? category : inferred.category;
     const resolvedConcern = detailsTouched ? concernLevel : inferred.concernLevel;
     const media = [...(voiceMedia ? [voiceMedia] : []), ...pendingMedia];
+    let nextObservations: BehaviorObservation[];
     if (editingId) {
-      setObservations((current) => current.map((observation) => observation.id === editingId ? { ...observation, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, sharedWithShelter, media } : observation));
+      nextObservations = observations.map((observation) => observation.id === editingId ? { ...observation, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, sharedWithShelter, media } : observation);
       setSavedMessage(`${dogName}’s profile has been updated.`);
     } else {
-      setObservations((current) => [{ id: `behavior-${Date.now()}`, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, observedAt: new Date().toISOString(), sharedWithShelter, media }, ...current]);
+      nextObservations = [{ id: `behavior-${Date.now()}`, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, observedAt: new Date().toISOString(), sharedWithShelter, media }, ...observations];
       setSavedMessage(`This moment is now part of ${dogName}’s profile.`);
     }
+    setObservations(nextObservations);
+    saveDogContext(dogId, nextObservations);
     resetComposer(); setComposerOpen(false);
   }
 
@@ -182,7 +206,7 @@ export default function BehaviorJournal({ dogName, temperament, initialObservati
         {profileMedia.length > 0 && <div className="mt-4"><p className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">Latest photos and videos from home</p><div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">{profileMedia.slice(0, 4).map((media) => media.type === "image" ? <img key={media.id} src={media.url} alt={media.name} className="h-24 w-full rounded-xl object-cover ring-1 ring-emerald-100" /> : <video key={media.id} src={media.url} aria-label={media.name} controls className="h-24 w-full rounded-xl bg-black object-cover" />)}</div></div>}
       </div>
 
-      {savedMessage && <p role="status" className="mx-5 mt-4 rounded-xl bg-emerald-100 px-4 py-3 text-sm font-semibold text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100 sm:mx-6">✓ {savedMessage}</p>}
+      {savedMessage && <div role="status" className="mx-5 mt-4 flex flex-col gap-3 rounded-xl bg-emerald-100 px-4 py-3 text-sm font-semibold text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100 sm:mx-6 sm:flex-row sm:items-center sm:justify-between"><span>✓ {savedMessage}</span><Link href="/admin/fosters/f1" className="w-fit rounded-full bg-white px-3 py-2 text-xs font-bold text-emerald-800 shadow-sm hover:bg-emerald-50 dark:bg-zinc-900 dark:text-emerald-200">Demo: view updated admin context →</Link></div>}
 
       <div className="flex flex-col gap-3 p-5 sm:p-6">
         {observations.map((observation) => {

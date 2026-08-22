@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { dogs, fosterParents } from "@/lib/mock-data";
+import AdminDogContext from "@/components/AdminDogContext";
 
 export default async function FosterDetailPage({
   params,
@@ -17,7 +18,7 @@ export default async function FosterDetailPage({
   const activeDogs = dogs.filter((dog) => foster.activeDogIds.includes(dog.id));
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
+    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
       <Link href="/admin/fosters" className="text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
         &larr; Back to foster parents
       </Link>
@@ -72,6 +73,15 @@ export default async function FosterDetailPage({
             </div>
           </div>
         )}
+
+        {activeDogs.map((dog) => (
+          <AdminDogContext
+            key={dog.id}
+            dogId={dog.id}
+            dogName={dog.name}
+            initialObservations={dog.behaviorObservations.filter((observation) => observation.sharedWithShelter)}
+          />
+        ))}
       </div>
     </div>
   );

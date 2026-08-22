@@ -82,6 +82,7 @@ export default function FosterHomePage() {
             )}
 
             <BehaviorJournal
+              dogId={dog.id}
               dogName={dog.name}
               temperament={dog.temperament}
               initialObservations={dog.behaviorObservations}
