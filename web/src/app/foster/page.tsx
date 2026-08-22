@@ -1,6 +1,7 @@
 import { dogs, fosterParents, scheduledTasks, volunteers } from "@/lib/mock-data";
 import { dogStatusLabels, dogStatusStyles, formatDateTime, taskStatusLabels, taskTypeLabels } from "@/lib/labels";
 import BehaviorJournal from "@/components/BehaviorJournal";
+import EmergencyConcern from "@/components/EmergencyConcern";
 import Image from "next/image";
 
 // No auth yet — standing in as "the logged-in foster parent" until sign-in exists.
@@ -27,7 +28,7 @@ export default function FosterHomePage() {
             key={dog.id}
             className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
           >
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
               <div className="flex items-center gap-4">
                 {dog.photoUrl && (
                   <Image
@@ -47,11 +48,12 @@ export default function FosterHomePage() {
                   </p>
                 </div>
               </div>
-              <span
-                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${dogStatusStyles[dog.status]}`}
-              >
-                {dogStatusLabels[dog.status]}
-              </span>
+              <div className="flex w-full flex-row items-center justify-between gap-2 sm:w-auto sm:flex-col sm:items-end">
+                <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${dogStatusStyles[dog.status]}`}>
+                  {dogStatusLabels[dog.status]}
+                </span>
+                <EmergencyConcern dogName={dog.name} />
+              </div>
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
