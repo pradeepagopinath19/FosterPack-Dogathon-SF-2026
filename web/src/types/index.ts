@@ -37,6 +37,15 @@ export interface FosterParent extends BaseProfile {
   activeDogIds: string[];
   yearsFostering: number;
   householdNotes: string;
+  matchingProfile: {
+    housingType: "studio" | "apartment" | "house";
+    yard: "none" | "unfenced" | "fenced";
+    activityLevel: "low" | "moderate" | "active" | "very-active";
+    hoursAwayPerDay: number;
+    residentPets: string[];
+    experience: string[];
+    preferences: string[];
+  };
 }
 
 export type UserProfile = Volunteer | FosterParent;

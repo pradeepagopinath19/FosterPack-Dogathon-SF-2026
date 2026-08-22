@@ -2,6 +2,7 @@ import { dogs, fosterParents, scheduledTasks, volunteers } from "@/lib/mock-data
 import { dogStatusLabels, dogStatusStyles, formatDateTime, taskStatusLabels, taskTypeLabels } from "@/lib/labels";
 import BehaviorJournal from "@/components/BehaviorJournal";
 import EmergencyConcern from "@/components/EmergencyConcern";
+import FosterMatchWidget from "@/components/FosterMatchWidget";
 import Image from "next/image";
 
 // No auth yet — standing in as "the logged-in foster parent" until sign-in exists.
@@ -17,6 +18,8 @@ export default function FosterHomePage() {
         <p className="text-sm text-zinc-500 dark:text-zinc-400">Welcome back,</p>
         <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{foster.name}</h1>
       </div>
+
+      {myDogs[0] && <FosterMatchWidget foster={foster} dog={myDogs[0]} />}
 
       {myDogs.map((dog) => {
         const tasks = scheduledTasks

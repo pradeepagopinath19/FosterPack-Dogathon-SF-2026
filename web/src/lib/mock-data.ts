@@ -54,6 +54,15 @@ export const fosterParents: FosterParent[] = [
     activeDogIds: ["d1"],
     yearsFostering: 3,
     householdNotes: "No other pets. Fenced backyard. Quiet street.",
+    matchingProfile: {
+      housingType: "house",
+      yard: "fenced",
+      activityLevel: "active",
+      hoursAwayPerDay: 4,
+      residentPets: [],
+      experience: ["Large dogs", "Leash reactivity", "Daily medication"],
+      preferences: ["One dog at a time", "Adult dogs", "Active companionship"],
+    },
   },
   {
     id: "f2",
@@ -66,6 +75,15 @@ export const fosterParents: FosterParent[] = [
     activeDogIds: ["d2"],
     yearsFostering: 0,
     householdNotes: "One resident cat, cat-experienced dogs preferred.",
+    matchingProfile: {
+      housingType: "apartment",
+      yard: "none",
+      activityLevel: "moderate",
+      hoursAwayPerDay: 7,
+      residentPets: ["Cat"],
+      experience: ["First-time foster"],
+      preferences: ["Small or medium dogs", "Cat-friendly", "Lower energy"],
+    },
   },
 ];
 
