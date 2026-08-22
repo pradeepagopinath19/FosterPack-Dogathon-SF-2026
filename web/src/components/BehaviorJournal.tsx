@@ -127,10 +127,10 @@ export default function BehaviorJournal({ dogName, temperament, initialObservati
     const media = [...(voiceMedia ? [voiceMedia] : []), ...pendingMedia];
     if (editingId) {
       setObservations((current) => current.map((observation) => observation.id === editingId ? { ...observation, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, sharedWithShelter, media } : observation));
-      setSavedMessage(`${dogName}’s living profile has been updated.`);
+      setSavedMessage(`${dogName}’s profile has been updated.`);
     } else {
       setObservations((current) => [{ id: `behavior-${Date.now()}`, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, observedAt: new Date().toISOString(), sharedWithShelter, media }, ...current]);
-      setSavedMessage(`This moment is now part of ${dogName}’s living profile.`);
+      setSavedMessage(`This moment is now part of ${dogName}’s profile.`);
     }
     resetComposer(); setComposerOpen(false);
   }
@@ -141,7 +141,7 @@ export default function BehaviorJournal({ dogName, temperament, initialObservati
     <section className="mt-6 overflow-hidden rounded-3xl border border-emerald-100 bg-emerald-50/70 shadow-sm dark:border-emerald-900 dark:bg-emerald-950/25">
       <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">{dogName}’s living profile</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">{dogName}’s profile</p>
           <h3 className="mt-1 text-xl font-bold text-zinc-950 dark:text-white">Help us get to know {dogName}</h3>
           <p className="mt-1 max-w-xl text-sm leading-6 text-zinc-700 dark:text-zinc-200">Speak, type, or show us a moment from home. Use one, two, or all three—whatever feels easiest.</p>
         </div>
@@ -173,7 +173,7 @@ export default function BehaviorJournal({ dogName, temperament, initialObservati
           <button type="button" onClick={() => setDetailsOpen((open) => !open)} className="mt-4 text-sm font-semibold text-emerald-800 hover:text-emerald-950 dark:text-emerald-300">{detailsOpen ? "Hide details ↑" : "Review details (optional) ↓"}</button>
           {detailsOpen && <div className="mt-3 rounded-xl bg-zinc-50 p-4 dark:bg-zinc-800/70"><p className="text-xs leading-5 text-zinc-500 dark:text-zinc-300">FosterPack organizes these details automatically. Change them only if something looks wrong.</p><div className="mt-3 grid gap-3 sm:grid-cols-2"><label className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Moment type<select value={category} onChange={(event) => { setCategory(event.target.value as BehaviorCategory); setDetailsTouched(true); }} className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 dark:border-zinc-700 dark:bg-zinc-900">{Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Attention<select value={concernLevel} onChange={(event) => { setConcernLevel(event.target.value as ConcernLevel); setDetailsTouched(true); }} className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 dark:border-zinc-700 dark:bg-zinc-900">{Object.entries(concernLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label></div><label className="mt-3 flex cursor-pointer items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-200"><input type="checkbox" checked={sharedWithShelter} onChange={(event) => setSharedWithShelter(event.target.checked)} className="size-4 accent-emerald-700" />Share this update with {dogName}’s shelter care team</label></div>}
 
-          <button type="submit" disabled={!hasInput} className="mt-5 w-full rounded-xl bg-emerald-800 px-5 py-3.5 text-base font-bold text-white shadow-md transition enabled:hover:-translate-y-0.5 enabled:hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-emerald-600">{editingId ? `Update ${dogName}’s profile` : `Add to ${dogName}’s living profile →`}</button><p className="mt-2 text-center text-xs text-zinc-500 dark:text-zinc-400">You can review and update this moment anytime.</p>
+          <button type="submit" disabled={!hasInput} className="mt-5 w-full rounded-xl bg-emerald-800 px-5 py-3.5 text-base font-bold text-white shadow-md transition enabled:hover:-translate-y-0.5 enabled:hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-emerald-600">{editingId ? `Update ${dogName}’s profile` : `Add to ${dogName}’s profile →`}</button><p className="mt-2 text-center text-xs text-zinc-500 dark:text-zinc-400">You can review and update this moment anytime.</p>
         </form>
       )}
 
