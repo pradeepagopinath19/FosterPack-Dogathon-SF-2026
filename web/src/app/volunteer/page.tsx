@@ -3,6 +3,7 @@ import { formatMemberSince, reliabilityBadge } from "@/lib/labels";
 import VolunteerCalendar from "@/components/VolunteerCalendar";
 import AvailabilityEditor from "@/components/AvailabilityEditor";
 import TaskCard from "@/components/TaskCard";
+import BehaviorJournal from "@/components/BehaviorJournal";
 
 // No auth yet — standing in as "the logged-in volunteer" until sign-in exists.
 const CURRENT_VOLUNTEER_ID = "v1";
@@ -22,6 +23,10 @@ export default async function VolunteerHomePage() {
   const myTasks = scheduledTasks.filter((task) => task.assignedVolunteerId === volunteer.id);
   const openTasks = scheduledTasks.filter((task) => task.status === "open");
   const badge = reliabilityBadge(volunteer.reliability);
+
+  // Volunteers journal about the dogs they are actually scheduled to see.
+  const myDogIds = new Set(myTasks.map((task) => task.dogId));
+  const myDogs = dogs.filter((dog) => myDogIds.has(dog.id));
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
@@ -84,6 +89,39 @@ export default async function VolunteerHomePage() {
             <TaskCard key={task.id} task={task} dog={dogs.find((d) => d.id === task.dogId)} />
           ))}
         </div>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Log what you saw</h2>
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          Notes from your visits become part of the dog&apos;s profile. When the same thing shows up
+          more than once, shelter staff get it as a suggestion to review.
+        </p>
+
+        {myDogs.length === 0 && (
+          <p className="mt-2 rounded-xl border border-dashed border-zinc-300 p-4 text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+            Claim a task to start logging observations.
+          </p>
+        )}
+
+        {myDogs.map((dog) => (
+          <div key={dog.id} className="mt-3">
+            <p className="font-medium text-zinc-900 dark:text-zinc-50">
+              {dog.name}{" "}
+              <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400">
+                &middot; {dog.breed}
+              </span>
+            </p>
+            <BehaviorJournal
+              dogId={dog.id}
+              dogName={dog.name}
+              temperament={dog.temperament}
+              initialObservations={dog.behaviorObservations}
+              authorRole="volunteer"
+              authorName={volunteer.name}
+            />
+          </div>
+        ))}
       </section>
 
       <section>

@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { loadDogContext, saveDogContext } from "@/lib/profile-context";
-import type { BehaviorCategory, BehaviorObservation, ConcernLevel, ObservationMedia } from "@/types";
+import type { BehaviorCategory, BehaviorObservation, ConcernLevel, JournalAuthorRole, ObservationMedia } from "@/types";
 
 const categoryLabels: Record<BehaviorCategory, string> = {
   temperament: "Temperament",
@@ -47,11 +47,13 @@ function inferDetails(note: string, hasVoice: boolean, hasVisual: boolean) {
   return { category, concernLevel, behavior, context };
 }
 
-export default function BehaviorJournal({ dogId, dogName, temperament, initialObservations }: {
+export default function BehaviorJournal({ dogId, dogName, temperament, initialObservations, authorRole = "foster", authorName }: {
   dogId: string;
   dogName: string;
   temperament: string[];
   initialObservations: BehaviorObservation[];
+  authorRole?: JournalAuthorRole;
+  authorName?: string;
 }) {
   const [observations, setObservations] = useState(initialObservations);
   const [composerOpen, setComposerOpen] = useState(false);
@@ -151,7 +153,7 @@ export default function BehaviorJournal({ dogId, dogName, temperament, initialOb
       nextObservations = observations.map((observation) => observation.id === editingId ? { ...observation, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, sharedWithShelter, media } : observation);
       setSavedMessage(`${dogName}’s profile has been updated.`);
     } else {
-      nextObservations = [{ id: `behavior-${Date.now()}`, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, observedAt: new Date().toISOString(), sharedWithShelter, media }, ...observations];
+      nextObservations = [{ id: `behavior-${Date.now()}`, category: resolvedCategory, concernLevel: resolvedConcern, behavior: inferred.behavior, context: inferred.context, observedAt: new Date().toISOString(), sharedWithShelter, media, authorRole, authorName }, ...observations];
       setSavedMessage(`This moment is now part of ${dogName}’s profile.`);
     }
     setObservations(nextObservations);
