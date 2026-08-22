@@ -1,0 +1,70 @@
+name: Deploy to Vercel
+
+# Deploys web/ to the Vercel project "fosterpack" on every push to main.
+#
+# One-time setup by a repo admin:
+#   1. Create a Vercel token at https://vercel.com/account/tokens
+#   2. Add it here as a repository secret named VERCEL_TOKEN
+#      (Settings -> Secrets and variables -> Actions -> New repository secret)
+#
+# The org and project ids below are identifiers, not credentials, so they are
+# checked in. The token is the only secret.
+#
+# Alternative to this workflow: connect the Vercel project directly to GitHub
+# from the Vercel dashboard. That needs a GitHub login connection on the Vercel
+# account, which was not configured when this was set up.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-production
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: team_P2UooblPx486TtAo5Bl8okQF
+  VERCEL_PROJECT_ID: prj_NEfjQWqBGPfgSPfWP3819dSi7gEG
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    # Skip cleanly instead of failing red if the secret has not been added yet.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.repository == 'pradeepagopinath19/FosterPack-Dogathon-SF-2026' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check for deploy token
+        id: guard
+        run: |
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "VERCEL_TOKEN is not set — skipping deploy."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install Vercel CLI
+        if: steps.guard.outputs.ready == 'true'
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment
+        if: steps.guard.outputs.ready == 'true'
+        working-directory: web
+        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Build
+        if: steps.guard.outputs.ready == 'true'
+        working-directory: web
+        run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Deploy to production
+        if: steps.guard.outputs.ready == 'true'
+        working-directory: web
+        run: vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}"
