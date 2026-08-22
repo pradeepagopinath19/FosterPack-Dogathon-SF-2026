@@ -89,6 +89,8 @@ export default function FosterHomePage() {
               dogName={dog.name}
               temperament={dog.temperament}
               initialObservations={dog.behaviorObservations}
+              authorRole="foster"
+              authorName={foster.name}
             />
 
             <div className="mt-4">

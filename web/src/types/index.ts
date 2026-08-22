@@ -120,6 +120,10 @@ export interface DogProfile {
 export type BehaviorCategory = "temperament" | "routine" | "trigger" | "progress";
 export type ConcernLevel = "routine" | "watch" | "urgent";
 
+// Who logged an observation. Optional so existing seed data stays valid;
+// entries without it are treated as coming from the foster home.
+export type JournalAuthorRole = "foster" | "volunteer";
+
 export interface BehaviorObservation {
   id: string;
   category: BehaviorCategory;
@@ -129,6 +133,8 @@ export interface BehaviorObservation {
   concernLevel: ConcernLevel;
   sharedWithShelter: boolean;
   media?: ObservationMedia[];
+  authorRole?: JournalAuthorRole;
+  authorName?: string;
 }
 
 export interface ObservationMedia {
@@ -136,6 +142,70 @@ export interface ObservationMedia {
   type: "image" | "video" | "audio";
   url: string;
   name: string;
+}
+
+// --- Dynamic profile layer -------------------------------------------------
+// Observations logged by fosters and volunteers are read by a rules engine that
+// proposes profile traits. Proposals carry evidence and are never applied on
+// their own: an admin confirms or dismisses each one (D10, "AI drafts, humans
+// decide"). Objective statistics below update live and need no approval.
+
+export type TraitKind = "temperament" | "quirk";
+
+export interface TraitProposal {
+  id: string;
+  dogId: string;
+  kind: TraitKind;
+  trait: string;
+  rationale: string;
+  evidenceIds: string[];
+  supportingCount: number;
+}
+
+export type TraitDecisionStatus = "confirmed" | "dismissed";
+
+export interface TraitDecision {
+  proposalId: string;
+  trait: string;
+  kind: TraitKind;
+  status: TraitDecisionStatus;
+  decidedAt: string;
+}
+
+export type AlertSeverity = "watch" | "urgent";
+
+export interface HealthAlert {
+  id: string;
+  dogId: string;
+  label: string;
+  detail: string;
+  severity: AlertSeverity;
+  evidenceIds: string[];
+}
+
+export interface DogStats {
+  daysInCare: number;
+  observationCount: number;
+  sharedCount: number;
+  lastObservedAt: string | null;
+  daysSinceLastObservation: number | null;
+}
+
+export type ExceptionKind =
+  | "no-foster"
+  | "overdue-checkin"
+  | "health-alert"
+  | "overdue-task"
+  | "long-stay";
+
+export interface OpsException {
+  id: string;
+  dogId: string;
+  dogName: string;
+  kind: ExceptionKind;
+  label: string;
+  detail: string;
+  severity: AlertSeverity;
 }
 
 // Scheduling/workflow layer: vet visits, walks, transport, medication, etc.
