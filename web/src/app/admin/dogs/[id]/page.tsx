@@ -49,7 +49,7 @@ export default async function DogDetailPage({
           </span>
         </div>
 
-        <dl className="mt-6 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
+        <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
           <div>
             <dt className="text-zinc-500 dark:text-zinc-400">Foster home</dt>
             <dd className="text-zinc-900 dark:text-zinc-100">

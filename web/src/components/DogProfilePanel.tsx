@@ -68,7 +68,7 @@ export default function DogProfilePanel({ dog }: { dog: DogProfile }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3">
         <Stat value={stats ? String(stats.daysInCare) : "—"} label="Days in care" />
         <Stat value={String(observations.length)} label="Shared journal entries" />
         <Stat value={String(privateCount)} label="Kept private by foster" />
