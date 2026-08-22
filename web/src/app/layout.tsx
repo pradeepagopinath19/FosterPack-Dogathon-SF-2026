@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "FosterPack",
   description: "Every foster has a pack. Coordinated support for foster caregivers.",
+  icons: { icon: "/fosterpack-logo.png", apple: "/fosterpack-logo.png" },
+  openGraph: {
+    title: "FosterPack",
+    description: "Every foster has a pack.",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

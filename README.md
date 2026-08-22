@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="web/public/fosterpack-logo.png" alt="FosterPack logo" width="360" />
+</p>
+
 # FosterPack-Dogathon-SF-2026
 **Every foster has a pack.**
 
