@@ -95,6 +95,26 @@ export const dogs: DogProfile[] = [
       },
     ],
     quirks: ["Afraid of skateboards", "Loves belly rubs", "Counter-surfs if food is left out"],
+    behaviorObservations: [
+      {
+        id: "bo1",
+        category: "trigger",
+        behavior: "Pulls away when skateboards pass",
+        context: "Morning walk on a busy block. Recovered after we crossed the street and gave him space.",
+        observedAt: "2026-08-22T08:15:00",
+        concernLevel: "watch",
+        sharedWithShelter: true,
+      },
+      {
+        id: "bo2",
+        category: "progress",
+        behavior: "Settled calmly after breakfast",
+        context: "Chose his bed without prompting and rested for about 40 minutes.",
+        observedAt: "2026-08-21T09:00:00",
+        concernLevel: "routine",
+        sharedWithShelter: false,
+      },
+    ],
     intakeDate: "2026-05-12",
   },
   {
@@ -116,6 +136,7 @@ export const dogs: DogProfile[] = [
     },
     medical: [],
     quirks: ["Hides during thunderstorms", "Needs a slow, quiet introduction"],
+    behaviorObservations: [],
     intakeDate: "2026-07-30",
   },
 ];

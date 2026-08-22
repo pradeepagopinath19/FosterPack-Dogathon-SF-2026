@@ -83,7 +83,21 @@ export interface DogProfile {
   feeding: FeedingSchedule;
   medical: MedicalNote[];
   quirks: string[];
+  behaviorObservations: BehaviorObservation[];
   intakeDate: string;
+}
+
+export type BehaviorCategory = "temperament" | "routine" | "trigger" | "progress";
+export type ConcernLevel = "routine" | "watch" | "urgent";
+
+export interface BehaviorObservation {
+  id: string;
+  category: BehaviorCategory;
+  behavior: string;
+  context: string;
+  observedAt: string;
+  concernLevel: ConcernLevel;
+  sharedWithShelter: boolean;
 }
 
 // Scheduling/workflow layer: vet visits, walks, transport, medication, etc.

@@ -1,5 +1,6 @@
 import { dogs, fosterParents, scheduledTasks, volunteers } from "@/lib/mock-data";
 import { dogStatusLabels, dogStatusStyles, formatDateTime, taskStatusLabels, taskTypeLabels } from "@/lib/labels";
+import BehaviorJournal from "@/components/BehaviorJournal";
 
 // No auth yet — standing in as "the logged-in foster parent" until sign-in exists.
 const CURRENT_FOSTER_ID = "f1";
@@ -63,6 +64,12 @@ export default function FosterHomePage() {
                 </ul>
               </div>
             )}
+
+            <BehaviorJournal
+              dogName={dog.name}
+              temperament={dog.temperament}
+              initialObservations={dog.behaviorObservations}
+            />
 
             <div className="mt-4">
               <p className="text-sm text-zinc-500 dark:text-zinc-400">Care schedule</p>
