@@ -11,8 +11,10 @@ export const volunteers: Volunteer[] = [
     bio: "Weekday mornings are my dog-walking time. Happy to help with vet runs too if I can drive.",
     skills: ["dog-walking", "vet-transport"],
     availability: ["Mon AM", "Wed AM", "Fri AM"],
+    availabilityExceptions: [],
     maxTravelMiles: 5,
     hasVehicle: true,
+    reliability: { tasksClaimed: 18, tasksCompleted: 17, lateReleases: 1, memberSince: "2025-11-03" },
   },
   {
     id: "v2",
@@ -24,8 +26,10 @@ export const volunteers: Volunteer[] = [
     bio: "I foster-sat during vet school and love overnight stays with anxious dogs.",
     skills: ["overnight-sitting", "training"],
     availability: ["Weekends"],
+    availabilityExceptions: [],
     maxTravelMiles: 10,
     hasVehicle: false,
+    reliability: { tasksClaimed: 9, tasksCompleted: 9, lateReleases: 0, memberSince: "2026-02-14" },
   },
   {
     id: "v3",
@@ -37,8 +41,10 @@ export const volunteers: Volunteer[] = [
     bio: "Can grab supplies on my lunch break most days, and I take good adoption photos.",
     skills: ["supply-runs", "photography"],
     availability: ["Tue PM", "Thu PM"],
+    availabilityExceptions: [],
     maxTravelMiles: 8,
     hasVehicle: true,
+    reliability: { tasksClaimed: 22, tasksCompleted: 19, lateReleases: 2, memberSince: "2025-08-30" },
   },
 ];
 
