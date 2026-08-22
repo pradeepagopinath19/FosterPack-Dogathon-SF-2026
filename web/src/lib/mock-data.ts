@@ -73,6 +73,7 @@ export const dogs: DogProfile[] = [
   {
     id: "d1",
     name: "Biscuit",
+    photoUrl: "/biscuit-profile.svg",
     fosterParentId: "f1",
     breed: "Lab mix",
     age: 4,

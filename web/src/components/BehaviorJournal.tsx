@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
-import type { BehaviorCategory, BehaviorObservation, ConcernLevel } from "@/types";
+import type { BehaviorCategory, BehaviorObservation, ConcernLevel, ObservationMedia } from "@/types";
 
 const categoryLabels: Record<BehaviorCategory, string> = {
   temperament: "Temperament",
@@ -49,6 +49,7 @@ export default function BehaviorJournal({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [savedMessage, setSavedMessage] = useState("");
+  const [pendingMedia, setPendingMedia] = useState<ObservationMedia[]>([]);
 
   const profileInsights = useMemo(
     () => [
@@ -58,9 +59,15 @@ export default function BehaviorJournal({
     [observations, temperament],
   );
 
+  const profileMedia = useMemo(
+    () => observations.flatMap((observation) => observation.media ?? []),
+    [observations],
+  );
+
   function startNew() {
     setEditingId(null);
     setForm(emptyForm);
+    setPendingMedia([]);
     setSavedMessage("");
     setFormOpen(true);
   }
@@ -74,6 +81,7 @@ export default function BehaviorJournal({
       concernLevel: observation.concernLevel,
       sharedWithShelter: observation.sharedWithShelter,
     });
+    setPendingMedia(observation.media ?? []);
     setSavedMessage("");
     setFormOpen(true);
   }
@@ -82,6 +90,19 @@ export default function BehaviorJournal({
     setFormOpen(false);
     setEditingId(null);
     setForm(emptyForm);
+    setPendingMedia([]);
+  }
+
+  function addMedia(files: FileList | null) {
+    if (!files) return;
+    const availableSlots = Math.max(0, 4 - pendingMedia.length);
+    const additions = Array.from(files).slice(0, availableSlots).map((file, index) => ({
+      id: `media-${Date.now()}-${index}`,
+      type: file.type.startsWith("video/") ? "video" as const : "image" as const,
+      url: URL.createObjectURL(file),
+      name: file.name,
+    }));
+    setPendingMedia((current) => [...current, ...additions]);
   }
 
   function saveObservation(event: FormEvent<HTMLFormElement>) {
@@ -94,7 +115,7 @@ export default function BehaviorJournal({
       setObservations((current) =>
         current.map((observation) =>
           observation.id === editingId
-            ? { ...observation, ...form, behavior: cleanBehavior, context: cleanContext }
+            ? { ...observation, ...form, behavior: cleanBehavior, context: cleanContext, media: pendingMedia }
             : observation,
         ),
       );
@@ -106,6 +127,7 @@ export default function BehaviorJournal({
         behavior: cleanBehavior,
         context: cleanContext,
         observedAt: new Date().toISOString(),
+        media: pendingMedia,
       };
       setObservations((current) => [observation, ...current]);
       setSavedMessage("Observation added to the living profile.");
@@ -114,6 +136,7 @@ export default function BehaviorJournal({
     setFormOpen(false);
     setEditingId(null);
     setForm(emptyForm);
+    setPendingMedia([]);
   }
 
   return (
@@ -155,6 +178,19 @@ export default function BehaviorJournal({
             </span>
           ))}
         </div>
+        {profileMedia.length > 0 && (
+          <div className="mt-4">
+            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-300">Latest photos and videos from home</p>
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {profileMedia.slice(0, 4).map((media) => media.type === "image" ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={media.id} src={media.url} alt={media.name} className="h-24 w-full rounded-xl object-cover ring-1 ring-emerald-100 dark:ring-emerald-800" />
+              ) : (
+                <video key={media.id} src={media.url} aria-label={media.name} controls className="h-24 w-full rounded-xl bg-black object-cover ring-1 ring-emerald-100 dark:ring-emerald-800" />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {savedMessage && (
@@ -233,6 +269,47 @@ export default function BehaviorJournal({
             </span>
           </label>
 
+          <div className="mt-4 rounded-xl border border-dashed border-emerald-300 bg-emerald-50/60 p-4 dark:border-emerald-700 dark:bg-emerald-950/30">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Add a photo or video</p>
+                <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-300">Show body language, progress, routines, or the environment. Up to four files.</p>
+              </div>
+              <label className="cursor-pointer rounded-full bg-white px-4 py-2 text-center text-sm font-semibold text-emerald-800 shadow-sm ring-1 ring-emerald-200 hover:bg-emerald-50 dark:bg-zinc-900 dark:text-emerald-200 dark:ring-emerald-700">
+                Upload media
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  multiple
+                  onChange={(event) => addMedia(event.target.files)}
+                  className="sr-only"
+                />
+              </label>
+            </div>
+            {pendingMedia.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {pendingMedia.map((media) => (
+                  <div key={media.id} className="relative overflow-hidden rounded-lg bg-zinc-900">
+                    {media.type === "image" ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={media.url} alt={media.name} className="h-24 w-full object-cover" />
+                    ) : (
+                      <video src={media.url} aria-label={media.name} className="h-24 w-full object-cover" />
+                    )}
+                    <button
+                      type="button"
+                      aria-label={`Remove ${media.name}`}
+                      onClick={() => setPendingMedia((current) => current.filter((item) => item.id !== media.id))}
+                      className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-black/75 text-xs font-bold text-white"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {form.concernLevel === "urgent" && (
             <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
               This entry will be highlighted, but it does not replace emergency care. Contact the shelter or emergency veterinarian using your approved protocol.
@@ -274,6 +351,16 @@ export default function BehaviorJournal({
             </div>
             <h4 className="mt-3 font-semibold text-zinc-950 dark:text-zinc-50">{observation.behavior}</h4>
             <p className="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{observation.context}</p>
+            {observation.media && observation.media.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {observation.media.map((media) => media.type === "image" ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={media.id} src={media.url} alt={media.name} className="h-32 w-full rounded-lg object-cover" />
+                ) : (
+                  <video key={media.id} src={media.url} aria-label={media.name} controls className="h-32 w-full rounded-lg bg-black object-cover" />
+                ))}
+              </div>
+            )}
             <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-500 dark:text-zinc-400">
               <span>{formatObservationDate(observation.observedAt)}</span>
               <span>{observation.sharedWithShelter ? "✓ Shared with shelter" : "Private foster note"}</span>

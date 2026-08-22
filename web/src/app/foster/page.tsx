@@ -1,6 +1,7 @@
 import { dogs, fosterParents, scheduledTasks, volunteers } from "@/lib/mock-data";
 import { dogStatusLabels, dogStatusStyles, formatDateTime, taskStatusLabels, taskTypeLabels } from "@/lib/labels";
 import BehaviorJournal from "@/components/BehaviorJournal";
+import Image from "next/image";
 
 // No auth yet — standing in as "the logged-in foster parent" until sign-in exists.
 const CURRENT_FOSTER_ID = "f1";
@@ -27,11 +28,24 @@ export default function FosterHomePage() {
             className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
           >
             <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{dog.name}</h2>
-                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                  {dog.breed} &middot; {dog.age} yrs &middot; {dog.energyLevel} energy
-                </p>
+              <div className="flex items-center gap-4">
+                {dog.photoUrl && (
+                  <Image
+                    src={dog.photoUrl}
+                    alt={`${dog.name}, a ${dog.breed}`}
+                    width={88}
+                    height={88}
+                    priority
+                    className="size-20 shrink-0 rounded-2xl border-2 border-white object-cover shadow-md ring-1 ring-zinc-200 dark:border-zinc-800 dark:ring-zinc-700 sm:size-24"
+                  />
+                )}
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-emerald-700 dark:text-emerald-300">Your foster dog</p>
+                  <h2 className="mt-1 text-2xl font-bold text-zinc-950 dark:text-white">{dog.name}</h2>
+                  <p className="mt-1 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                    {dog.breed} &middot; {dog.age} years old &middot; {dog.energyLevel} energy
+                  </p>
+                </div>
               </div>
               <span
                 className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${dogStatusStyles[dog.status]}`}

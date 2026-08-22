@@ -98,6 +98,14 @@ export interface BehaviorObservation {
   observedAt: string;
   concernLevel: ConcernLevel;
   sharedWithShelter: boolean;
+  media?: ObservationMedia[];
+}
+
+export interface ObservationMedia {
+  id: string;
+  type: "image" | "video";
+  url: string;
+  name: string;
 }
 
 // Scheduling/workflow layer: vet visits, walks, transport, medication, etc.
