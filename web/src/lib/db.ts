@@ -15,7 +15,14 @@ interface Database {
   scheduledTasks: ScheduledTask[];
 }
 
-const DB_PATH = path.join(process.cwd(), "data", "db.json");
+const DB_PATH =
+  process.env.FOSTERPACK_DB_PATH ??
+  // Serverless filesystems are read-only apart from the temp directory, so on
+  // Vercel the demo database lives there. It is per-instance and ephemeral:
+  // edits survive within a warm instance but not across cold starts.
+  (process.env.VERCEL
+    ? path.join("/tmp", "fosterpack-db.json")
+    : path.join(process.cwd(), "data", "db.json"));
 
 async function readDb(): Promise<Database> {
   try {
@@ -27,7 +34,12 @@ async function readDb(): Promise<Database> {
       dogs: seedDogs,
       scheduledTasks: seedScheduledTasks,
     };
-    await writeDb(seed);
+    try {
+      await writeDb(seed);
+    } catch {
+      // Best effort. If the filesystem is not writable we still serve the seed
+      // from memory rather than failing the request.
+    }
     return seed;
   }
 }

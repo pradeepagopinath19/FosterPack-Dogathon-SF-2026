@@ -7,6 +7,8 @@
 
 An AI-agent-powered incident-coordination portal for foster dog networks. One message from a foster caregiver becomes prioritized, assigned, trackable actions — walks, vet runs, medication, supplies, backup care — routed to volunteers, shelter staff, and vet teams automatically. Each dog carries a living profile — temperament, feeding, medical notes, quirks. AI coordinates; authorized humans decide.
 
+**Live demo → [fosterpack.vercel.app](https://fosterpack.vercel.app)**
+
 ## Design docs
 
 Full product and engineering design lives in **[WOLFPACK.md](WOLFPACK.md)** (start here — it indexes everything below):
@@ -97,3 +99,39 @@ constant until sign-in exists.
 Scaffolded so far: volunteer, foster-parent, and admin views over mock data — profile
 directories, the dog profile with its dynamic journal loop, and the exception-first
 operations home.
+
+## Deployment
+
+Deployed to Vercel at **[fosterpack.vercel.app](https://fosterpack.vercel.app)**
+(project `before-you-board/fosterpack`, root directory `web/`).
+
+Deploy manually from a checkout:
+
+```bash
+cd web
+vercel deploy --prod
+```
+
+### Automatic deploys
+
+[`.github/workflows/vercel-deploy.yml`](.github/workflows/vercel-deploy.yml) deploys
+every push to `main`. It needs **one** repository secret before it will run:
+
+1. Create a token at <https://vercel.com/account/tokens>
+2. Add it under **Settings → Secrets and variables → Actions** as `VERCEL_TOKEN`
+
+Without the secret the workflow skips rather than failing. The org and project ids are
+identifiers rather than credentials, so they are checked into the workflow.
+
+> The usual route — connecting the repo to Vercel from the dashboard — needs a GitHub
+> login connection on the Vercel account, which was not configured. Adding that
+> connection and clicking **Import Project** would replace the workflow above.
+
+### Serverless caveat
+
+`web/src/lib/db.ts` is a JSON file standing in for a database. Serverless filesystems
+are read-only apart from the temp directory, so on Vercel it writes to `/tmp` and falls
+back to serving the seed from memory when writes fail. Volunteer availability edits
+therefore survive within a warm instance but not across cold starts. Journal entries and
+trait decisions are unaffected — they live in the browser's `localStorage`. Both want a
+real database next.

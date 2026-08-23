@@ -48,7 +48,7 @@ export default function AdminPage() {
 
       <section>
         <h2 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">At a glance</h2>
-        <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-2 grid grid-cols-2 gap-3">
           {stats.map((stat) => (
             <div
               key={stat.label}
@@ -63,7 +63,7 @@ export default function AdminPage() {
 
       <section>
         <h2 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Directories</h2>
-        <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-2 flex flex-col gap-3">
           {directories.map((entry) => (
             <Link
               key={entry.href}
