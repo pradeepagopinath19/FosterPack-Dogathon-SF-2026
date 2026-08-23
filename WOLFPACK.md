@@ -18,6 +18,7 @@ Shelters run foster programs on spreadsheets, group texts, and staff memory. The
 
 | Document | What it covers |
 |---|---|
+| **[Pitch deck](docs/The-Foster-Pack-Pitch-Deck.pdf)** | 24 slides — the problem, the product, and the ask. Opens in the browser; original as [`.pptx`](docs/The-Foster-Pack-Pitch-Deck.pptx) |
 | **[Product Requirements](docs/WolfPack-PRD.md)** | Problem, personas, domain model, 12 feature areas, NFRs, synthetic data spec, risks, sequencing, open questions |
 | **[Solution & Feature Breakdown](docs/WolfPack-Solution-Breakdown.md)** | Architecture, tech stack, repo layout, **18 workstreams** by technical module, shared contracts, merge strategy, testing |
 | **[Development Split by Persona](docs/WolfPack-Team-Split-By-Persona.md)** | The same work organized into **6 teams by user persona** — foster, volunteer, admin, community, plus platform and matching. Ownership seams, journeys, and how to run it with fewer people. |
